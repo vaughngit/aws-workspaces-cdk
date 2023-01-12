@@ -1,15 +1,18 @@
 tasks:
   - command: yarn run watch
     init: yarn install && yarn run build
+  - name: ConfigAlias
+    command: echo 'alias pj="npx projen"' >> ~/.bashrc && echo 'alias cdk="npx cdk"' >> ~/.bashrc
   - name: Initialize & Configure AWS
     command: bash $GITPOD_REPO_ROOT/gitpod_scripts/gitpod_configure_aws.sh
-  - command: run npm install 
-    init: npm install
-  - command: run cdk install
-    init: npm install -g aws-cdk
-  - command: install tree 
-    init: sudo apt install tree
-
+  - name: Install DOTNET 6.0
+    command: bash $GITPOD_REPO_ROOT/gitpod_scripts/gitpod_configure_dotnet.sh
+  - name: npm install
+    command: run npm install 
+  - name: install tree
+    command: sudo apt install tree 
+  - name: install cdk
+    command: npm install -g aws-cdk
 vscode:
   extensions:
     - ms-azuretools.vscode-docker
