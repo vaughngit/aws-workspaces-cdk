@@ -1,9 +1,9 @@
 tasks:
-  - name: yarn run watch
-    init: |
-      yarn install 
-      yarn run build
-    command: yarn run watch
+  # - name: yarn run watch
+  #   init: |
+  #     yarn install 
+  #     yarn run build
+  #   command: yarn run watch
   - name: Initialize & Configure AWS
     command: bash $GITPOD_REPO_ROOT/gitpod_scripts/gitpod_configure_aws.sh
   - name: Install DOTNET 6.0

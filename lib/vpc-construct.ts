@@ -38,7 +38,7 @@ export class VpcConstruct extends Construct  {
     vpcName: props.solutionName,
     natGatewayProvider: natGatewayProvider,
     maxAzs: 3,
-    cidr: "172.16.0.0/16",
+    ipAddresses:  ec2.IpAddresses.cidr('172.16.0.0/16'),
     natGateways: 2,
     enableDnsHostnames: true,
     enableDnsSupport: true,
