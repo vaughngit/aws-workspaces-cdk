@@ -326,9 +326,11 @@ export class VpcConstruct extends Construct  {
 
   new CfnOutput(this, 'VPCPrivateSubnet2', { value: vpc.privateSubnets[2].subnetId, exportName: `${props.solutionName}:PrivateSubnet2`} );
 
-  new CfnOutput(this, 'VPCPrivateSubnet0-AZ', { value: vpc.privateSubnets[0].availabilityZone} );
+  new CfnOutput(this, 'VPCPrivateSubnet0-AZ', { value: vpc.privateSubnets[0].availabilityZone, exportName: `${props.solutionName}:PrivateAZ0`});
   
-  new CfnOutput(this, 'VPCPrivateSubnet1-AZ', { value: vpc.privateSubnets[1].availabilityZone });
+  new CfnOutput(this, 'VPCPrivateSubnet1-AZ', { value: vpc.privateSubnets[1].availabilityZone,  exportName: `${props.solutionName}:PrivateAZ1` });
+
+  new CfnOutput(this, 'VPCPrivateSubnet2-AZ', { value: vpc.privateSubnets[2].availabilityZone,  exportName: `${props.solutionName}:PrivateAZ2` });
 
   new CfnOutput(this, 'EC2SecurityGroup', { value: ec2SG.securityGroupId, exportName: `${props.solutionName}:EC2SecurityGroup`} );
 

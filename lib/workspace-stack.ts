@@ -1,7 +1,8 @@
-import { aws_workspaces as workspaces, Stack, StackProps, aws_directoryservice as directoryservice } from 'aws-cdk-lib';
+import { aws_workspaces as workspaces, Stack, StackProps, aws_directoryservice as directoryservice, Fn } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {aws_ec2 as ec2} from 'aws-cdk-lib'
-import {VpcConstruct} from './vpc-construct'
+//import {VpcConstruct} from './vpc-construct'
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 
 
 
@@ -17,33 +18,56 @@ export class WorkspaceStack extends Stack {
   /**
    * VPC 
    */
-  vpc: ec2.Vpc;
+ // network: ec2.Vpc;
   
 
   constructor(scope: Construct, id: string, props: IStackProps) {
     super(scope, id, props);
 
-    // API Gateway ============================================
-    const dirvpc = new VpcConstruct(this, 'vpc', {
+
+/*  
+
+    let dirvpc = new VpcConstruct(this, 'vpc', {
       costcenter: props.costcenter,
       environment: props.environment,
       solutionName: props.solutionName
     });
 
-    this.vpc = dirvpc.vpc; 
+    this.network = dirvpc.vpc;  
+  */
 
+    // let test = Vpc.fromLookup(this, "vpcid", {
+    //   vpcId: Fn.importValue(`${props.solutionName}:${props.environment}:VPCID:${this.region}`).toString()
+    // })
+
+    
+    const test = Vpc.fromVpcAttributes(this, 'import-vpc', {
+      availabilityZones: [Fn.importValue(`${props.solutionName}:PrivateAZ0`), Fn.importValue(`${props.solutionName}:PrivateAZ1`), Fn.importValue(`${props.solutionName}:PrivateAZ2`)],
+      privateSubnetIds: [
+        Fn.importValue(`${props.solutionName}:PrivateSubnet0`),
+        Fn.importValue(`${props.solutionName}:PrivateSubnet1`),
+        Fn.importValue(`${props.solutionName}:PrivateSubnet2`)
+      ],
+      vpcId: Fn.importValue(`${props.solutionName}:${props.environment}:VPCID:${this.region}`),
+    });
+
+    // Iterate the private subnets
+    const selection = test.selectSubnets({
+      subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
+    });
  
     const cfnMicrosoftAD = new directoryservice.CfnMicrosoftAD(this, 'MyCfnMicrosoftAD', {
       name: 'demouser',
       password: '',
       vpcSettings: {
-        subnetIds: [
-          this.vpc.privateSubnets[0].subnetId,
-          this.vpc.privateSubnets[1].subnetId,
-          this.vpc.privateSubnets[2].subnetId,
-        
-        ],
-        vpcId: this.vpc.vpcId,
+        // subnetIds: [
+        //   // dirvpc.vpc.privateSubnets[0].subnetId,
+        //   // dirvpc.vpc.privateSubnets[1].subnetId,
+        //   // dirvpc.vpc.privateSubnets[2].subnetId
+        //   selection.subnetIds
+        // ],
+        subnetIds: selection.subnetIds,
+        vpcId: test.vpcId,
       },
     
       // the properties below are optional
